@@ -23,20 +23,26 @@ class Simulator:
 
         return iterations
 
+    def mean_value(self, iterations, sim_count):
+        totalt_iterations = sum(iterations)
+        return total_iterations/ self.sim_count
+
+    def confidence_interval(self, iterations, mean_value, sim_count):
+        for iteration in iterations:
+            standard_deviation_sum += ((iteration - mean_value)**2)**1/2
+        standard_deviation = standard_deviation_sum_tot / len(iterations)
+        interval = {"lower": mean_value - standard_deviation / self.sim_count**1/2),
+                    "upper": mean_value + standard_deviation / self.sim_count**1/2}
+        return interval
 
     def start(self):
         total_iterations = 0
         iterations = []
         for _ in range(sim_count):
-            iteration.append(self.simulate_once())
-        total_iterations = sum(iteration)
-        self.average_iterations = total_iterations / self.sim_count
-        confidence_interaval = 0
-        for iteration in iterations:
-            confidence_interaval_sum
-
-        self.average_iterations + (self.lamda * ())
-
+            iterations.append(self.simulate_once())
+        self.average_iterations = mean_value(iterations, sim_count)
+        confidence_interval = confidence_interval(self, iterations)
+        )
 
 
 # Simulation config
@@ -47,12 +53,3 @@ sim_count = 10
 
 simulator = Simulator(u, k, c, sim_count)
 simulator.start()
-
-
-
-
-
-
-
-
-

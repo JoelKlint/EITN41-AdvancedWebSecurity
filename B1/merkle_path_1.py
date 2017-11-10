@@ -1,6 +1,6 @@
 import hashlib
 
-file = open("merkle_input.txt", "r", encoding='utf-8')
+file = open("merkle_1_input.txt", "r", encoding='utf-8')
 
 prev_digest = ""
 for i in enumerate(file):

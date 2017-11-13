@@ -13,35 +13,70 @@ class Tree:
             self.add_parent_level()
             self.assign_parents()
 
-    def get_node(self, index):
+    def value_of(self, index):
         if type(index) is not tuple:
             raise TypeError("Only supports indexing with tuple")
         return self.levels[index[0]][index[1]]
 
-    def parent_index(self, index):
+    def parent_of(self, index):
         if type(index) is not tuple:
             raise TypeError("Only supports indexing with tuple")
         return (index[0]-1, self.row_index_of_parent(index[1]))
 
-    def right_child_index(self, index):
+    def right_child_of(self, index):
         if type(index) is not tuple:
             raise TypeError("Only supports indexing with tuple")
         return (index[0]+1, self.row_index_of_right_child(index[1]))
 
-    def left_child_index(self, index):
+    def left_child_of(self, index):
         if type(index) is not tuple:
             raise TypeError("Only supports indexing with tuple")
         return (index[0]+1, self.row_index_of_left_child(index[1]))
 
-    def is_right_child(self, index):
+    def is_right_sibling(self, index):
         if type(index) is not tuple:
             raise TypeError("Only supports indexing with tuple")
         return index[1]%2 == 1
 
-    def is_left_child(self, index):
+    def is_left_sibling(self, index):
         if type(index) is not tuple:
             raise TypeError("Only supports indexing with tuple")
         return index[1]%2 == 0
+
+    def left_node_of(self, index):
+        if type(index) is not tuple:
+            raise TypeError("Only supports indexing with tuple")
+        return (index[0], index[1]-1)
+
+    def right_node_of(self, index):
+        if type(index) is not tuple:
+            raise TypeError("Only supports indexing with tuple")
+        return (index[0], index[1]+1)
+
+    def is_root(self, index):
+        if type(index) is not tuple:
+            raise TypeError("Only supports indexing with tuple")
+        return index == (0, 0)
+
+    def merkle_path_for(self, index):
+        if type(index) is not tuple:
+            raise TypeError("Only supports indexing with tuple")
+        node = index
+        result = []
+        while not self.is_root(node):
+            if self.is_left_sibling(node):
+                # Take right
+                right_node = self.right_node_of(node)
+                result.append('R' + tree.value_of(right_node))
+            else:
+                # Take left
+                left_node = self.left_node_of(node)
+                result.append('L' + tree.value_of(left_node))
+            node = self.parent_of(node)
+        return result
+
+    def bottom_layer_index(self):
+        return len(self.levels)-1
 
     def create_leaf_level(self):
         leaf_count = len(self.input_data)
@@ -83,7 +118,7 @@ class Tree:
 
     def row_index_of_parent(self, node_index):
         node_index -= 1 if node_index%2 != 0 else 0
-        return node_index / 2
+        return int(node_index / 2)
 
     def hash_string(self, string):
         return hashlib.sha1(bytearray.fromhex(string)).hexdigest()
@@ -101,9 +136,27 @@ for i in enumerate(file):
     if index == 0:
         interesting_leaf_index = int(row)
     elif index == 1:
-        interesting_path_depth = int(row)
+        interesting_path_depth = int(row) - 1
     else:
         input_data.append(row)
 
 tree = Tree(input_data)
 
+interesting_node = (tree.bottom_layer_index(), interesting_leaf_index)
+
+merkle_path = tree.merkle_path_for(interesting_node)
+merkle_root = tree.value_of((0, 0))
+merkle_node = merkle_path[::-1][interesting_path_depth]
+
+print("___Merkle node + Merkle root___")
+print(merkle_node + merkle_root)
+
+print()
+
+print("___Merkle path___")
+for node in merkle_path:
+    print(node)
+
+# Hitta root
+# Hitta en nod i merkle path på bestämt djup
+# Hela merkle path

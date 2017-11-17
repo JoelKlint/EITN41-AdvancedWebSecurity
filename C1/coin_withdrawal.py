@@ -71,7 +71,19 @@ class Alice:
             })
         a1 = result[0]['a']
         print("[Alice] A1 is: {}".format(a1))
-        print("[Alice] A1 mod ID is: {}".format(a1^self.ID))
+        print("[Alice] A1 xor ID is: {}".format(a1^self.ID))
+        print("[Alice] A1 xor A1 xor ID is: {}".format(a1^a1^self.ID))
+        print()
+        a2 = result[1]['a']
+        print("[Alice] A2 is: {}".format(a2))
+        print("[Alice] A2 xor ID is: {}".format(a2^self.ID))
+        print("[Alice] A2 xor A2 xor ID is: {}".format(a2^a2^self.ID))
+        print()
+        a3 = result[2]['a']
+        print("[Alice] A3 is: {}".format(a3))
+        print("[Alice] A3 xor ID is: {}".format(a3^self.ID))
+        print("[Alice] A3 xor A3 xor ID is: {}".format(a3^a3^self.ID))
+        print()
         self.quads = result
 
     def _calc_B(self, quad):
@@ -79,7 +91,7 @@ class Alice:
 
     def calculate_all_B(self):
         self.B = list(map(lambda quad: self._calc_B(quad), self.quads))
-        print("[Alice] B: {}".format(self.B))
+        # print("[Alice] B: {}".format(self.B))
 
     def get_B(self):
         return self.B
@@ -95,7 +107,7 @@ class Alice:
             prod *= quad['r'] % self.n
         prod = prod % self.n
         serial_nr = (modinv(prod, self.n) * sign) % self.n
-        print("[Alice] Serial number: {}".format(serial_nr))
+        print("[Alice] Coin serial number: {}".format(serial_nr))
         return serial_nr
 
 class Bank:
@@ -114,7 +126,7 @@ class Bank:
         random.shuffle(a)
         self.R = a[:k]
         self.Rinv = a[k:]
-        print("[Bank] picked indicies: {}".format(self.R))
+        # print("[Bank] picked indicies: {}".format(self.R))
 
     def _calc_B(self, quad):
         return Shared.calc_B(quad, self.e, self.n, self.ID)
@@ -124,7 +136,7 @@ class Bank:
 
     def verify_Bi(self, index, quad):
         temp_B = self._calc_B(quad)
-        print("[Bank] Verifying B{} - {}".format(index, temp_B))
+        # print("[Bank] Verifying B{} - {}".format(index, temp_B))
         if temp_B == self.B[index]:
             return True
         else:
@@ -136,7 +148,7 @@ class Bank:
         for B in unverified_B:
             prod *= pow(B, self.d, self.n)
         self.blind_signature = prod % self.n
-        print("[Bank] Signature: {}".format(self.blind_signature))
+        print("[Bank] withdrawal signature: {}".format(self.blind_signature))
 
     def get_blind_signature(self):
         return self.blind_signature
@@ -145,6 +157,7 @@ class Bank:
 global_p = 193
 global_q = 103
 global_n = global_p * global_q
+
 global_e = 19
 
 phi_n = (global_p-1) * (global_q-1)
@@ -157,12 +170,15 @@ print("___RSA params___")
 print("p: {}".format(global_p))
 print("q: {}".format(global_q))
 print("n: {}".format(global_n))
+print("phi_n: {}".format(phi_n))
 print("e: {}".format(global_e))
 print("d: {}".format(global_d))
 print()
 print("k: {}".format(global_k))
-print("ID: {}".format(global_ID))
+print("ID for transaction: {}".format(global_ID))
 print()
+
+print("___Start withdrawal___")
 
 alice_conf = {
     "e": global_e,
@@ -201,5 +217,4 @@ for i in bank.get_R():
 # Bank
 bank.sign_blindly()
 signature = bank.get_blind_signature()
-
 serial_nr = alice.extract_serial_number(signature)

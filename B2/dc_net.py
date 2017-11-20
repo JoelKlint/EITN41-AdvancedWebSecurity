@@ -17,7 +17,9 @@ def calculate_output(conf):
     DB = hex_to_binary_string(conf["DB"])
     M = hex_to_binary_string(conf["M"])
 
-    our_broadcast = ""
+    our_broadcast_binary = ""
+
+    should_send_message = conf["b"]
 
     for i in range(16):
         conf_i = {
@@ -29,17 +31,35 @@ def calculate_output(conf):
         }
 
         # Construct out broadcasted message
-        should_send_message = conf["b"]
         XOR = conf_i["SA"]^conf_i["SB"]
         if should_send_message:
             our_broadcast_i = XOR^conf_i["M"]
         else:
             our_broadcast_i = XOR
 
-        our_broadcast += str(our_broadcast_i)
+        our_broadcast_binary += str(our_broadcast_i)
     
-    our_broadcast = binary_string_to_hex(our_broadcast)
-    print("Our broadcast: {}".format(our_broadcast))
+    our_broadcast = binary_string_to_hex(our_broadcast_binary)
+    # print("Our broadcast: {}".format(our_broadcast))
+
+    if not should_send_message:
+        secret_message_binary = ""
+        for i in range(16):
+            conf_i = {
+                "WE": int(our_broadcast_binary[i]),
+                "DA": int(DA[i]),
+                "DB": int(DB[i]),
+            }
+
+            XOR = conf_i["WE"]^conf_i["DA"]^conf_i["DB"]
+            secret_message_binary += str(XOR)
+        secret_message = binary_string_to_hex(secret_message_binary)
+        # print("Secret message: {}".format(secret_message))
+        return our_broadcast + secret_message
+    else:
+        return our_broadcast
+
+
 
 conf_1 = {
     "SA": "0C73",
@@ -57,4 +77,13 @@ conf_2 = {
     "M": "27BC",
     "b": 1
 }
-calculate_output(conf_2)
+conf_quiz = {
+    "SA": "75F5",
+    "SB": "B1AC",
+    "DA": "67C1",
+    "DB": "A398",
+    "M": "00BC",
+    "b": 0
+}
+a = calculate_output(conf_quiz)
+print(a)

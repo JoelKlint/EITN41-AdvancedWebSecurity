@@ -78,12 +78,12 @@ conf_2 = {
     "b": 1
 }
 conf_quiz = {
-    "SA": "75F5",
-    "SB": "B1AC",
-    "DA": "67C1",
-    "DB": "A398",
-    "M": "00BC",
-    "b": 0
+    "SA": "DA12",
+    "SB": "5050",
+    "DA": "C826",
+    "DB": "4264",
+    "M": "ADE4",
+    "b": 1
 }
 a = calculate_output(conf_quiz)
 print(a)

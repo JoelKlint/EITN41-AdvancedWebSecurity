@@ -15,15 +15,15 @@ def deactivate_circuit(k, n, private_polynomial, shares, participants, shared_ma
     print(master_poly(0))
 
 if __name__ == "__main__":
-    k = 5
-    n = 8
+    k = 3
+    n = 6
     private_polynomial = interpolate.lagrange(
-        [0, 1, 2, 3, 4, 5, 6, 7, 8], 
-        [13, 38, 161, 568, 1565, 3578, 7153, 12956, 21773]
+        [0] + list(range(2, n+1)), 
+        [9] + [67, 111, 165, 229, 303]
     )
-    shares = [75, 75, 54, 52, 77, 54, 43]
-    participants = [2, 4, 5, 7]
-    shared_master_points = [2782, 30822, 70960, 256422]
+    shares = [37, 18, 40, 44, 28]
+    participants = [4, 5]
+    shared_master_points = [1385, 2028]
 
     deactivate_circuit(
         k, 

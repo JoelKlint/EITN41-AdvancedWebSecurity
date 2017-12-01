@@ -2,7 +2,7 @@ from random import randint
 import hashlib
 import itertools
 
-X_LENGTH = 10
+X_LENGTH = 16
 K_LENGTH = 16
 
 _all_possible_k = None
@@ -59,7 +59,7 @@ def simulate_binding_once():
     
     return i
 
-def simulate_bindings(iterations = 10):
+def simulate_bindings(iterations = 100):
     print("--------------------------------")
     print("Starting binding simulation...")
     print("Simulations: {}".format(iterations))
@@ -72,7 +72,7 @@ def simulate_bindings(iterations = 10):
 
     probability = iterations / sum(attemts)
     print()
-    print("Probability: {}".format(probability))
+    print("Probability of breaking binding property: {}".format(probability))
 
 def simulate_concealing_once():
     alice_x, alice_k, = vote(randint(0, 1))
@@ -92,7 +92,7 @@ def simulate_concealing_once():
         if no_x == alice_x:
             found_no_match = True
     
-    return found_yes_match and found_no_match
+    return not (found_yes_match and found_no_match)
 
 
 def simulate_concealing(iterations = 100):
@@ -103,15 +103,18 @@ def simulate_concealing(iterations = 100):
     broke_concealing_count = 0
     for i in range(iterations):
         broke_concealing = simulate_concealing_once()
-        print(" - Result in iteration {}: {}".format(i+1, broke_concealing))
+        print(" - Broke concealing in iteration {}: {}".format(i+1, broke_concealing))
         if broke_concealing:
             broke_concealing_count += 1
     
     probability = broke_concealing_count / iterations
     print()
-    print("Probability: {}".format(probability))
+    print("Probability of breaking concealing property: {}".format(probability))
 
 if __name__ == '__main__':
+    X_LENGTH = 16
+    K_LENGTH = 16
+
     print("bits in V: 1")
     print("bits in K: {}".format(K_LENGTH))
     print("bits in X: {}".format(X_LENGTH))

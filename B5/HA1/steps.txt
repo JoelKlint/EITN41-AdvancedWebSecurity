@@ -1,0 +1,30 @@
+1. 
+openssl rsa -check -in censored.key
+2. 
+openssl asn1parse -in censored.key
+3. 
+copy output from number 2 into censoredRSA.py
+    row 1 = v
+    row 2 = DO NOT COPY THIS IS n
+    row 3 = e
+    row 4 =  d
+    row 5 = p
+    row 6 = q
+    row 7 = ex1
+    row 8 = ex2
+    row 9 = c
+    Just skip row 2 and copy it over in order
+
+4. 
+python3 censoredRSA.py
+5. 
+openssl asn1parse -genconf asn.txt -out new.der
+6. 
+openssl rsa -in new.der -inform der -text -check
+7. 
+copy over from -----BEGIN RSA PRIVATE KEY-----
+to -----END RSA PRIVATE KEY----- into key.pem
+8. 
+openssl base64 -d -in message.txt > message.bin
+9. 
+openssl rsautl -decrypt -in message.bin -inkey key.pem
